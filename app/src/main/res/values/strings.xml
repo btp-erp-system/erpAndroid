@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Instagram Clone</string>
+    <string name="from">From</string>
+    <string name="yashGautam">Yash Gautam</string>
+    <string name="name">name</string>
+    <string name="password">password</string>
+    <string name="email">email</string>
+</resources>
