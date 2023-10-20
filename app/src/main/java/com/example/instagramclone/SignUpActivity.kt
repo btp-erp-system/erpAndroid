@@ -1,5 +1,6 @@
 package com.example.instagramclone
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -31,6 +32,7 @@ class SignUpActivity : AppCompatActivity() {
             }
             else {
                 Toast.makeText(this, "Registration Done", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this,LoginActivity::class.java))
             }
         }
     }
