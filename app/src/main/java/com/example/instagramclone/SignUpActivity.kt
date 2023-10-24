@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.example.instagramclone.Models.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.database
 
 class SignUpActivity : AppCompatActivity() {
@@ -20,8 +21,9 @@ class SignUpActivity : AppCompatActivity() {
     //val binding by lazy
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
-    private lateinit var etUserName: EditText
     private lateinit var signupProgressBarIcon: ProgressBar
+    private lateinit var auth:FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +31,8 @@ class SignUpActivity : AppCompatActivity() {
 
         etEmail = findViewById(R.id.emailText)
         etPassword = findViewById(R.id.passText)
-        etUserName = findViewById(R.id.usernameText)
         signupProgressBarIcon = findViewById(R.id.signupLoadingIcon)
-        val auth = FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
         val database = Firebase.database
 
 
@@ -40,7 +41,6 @@ class SignUpActivity : AppCompatActivity() {
             val emailPattern = ".*@iitp\\.ac\\.in"
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
-            val userName = etUserName.text.toString().trim()
             if(email.isEmpty()){
                 etEmail.error = "Email is required"
                 return@setOnClickListener
@@ -49,18 +49,18 @@ class SignUpActivity : AppCompatActivity() {
                 etEmail.error = "Enter your college email"
                 return@setOnClickListener
             }
-            else if(password.length<3){
+            else if(password.length<6){
                 etPassword.error = "Password is to short"
             }
             else {
                 auth.createUserWithEmailAndPassword(etEmail.text.toString().trim(),etPassword.text.toString().trim()).
                 addOnCompleteListener {task ->
-                    if(task.isComplete){
-                        val newUser = User(etUserName.text.toString().trim(),etEmail.text.toString().trim(),etPassword.text.toString().trim())
+                    if(task.isSuccessful){
+                        showSignupLoadingIcon()
+                        simulateSignup()
                     }
                 }
-                showSignupLoadingIcon()
-                simulateSIgnup()
+
             }
         }
     }
@@ -73,12 +73,12 @@ class SignUpActivity : AppCompatActivity() {
         signupProgressBarIcon.visibility = View.GONE
     }
 
-    private fun simulateSIgnup(){
+    private fun simulateSignup(){
         Handler(Looper.getMainLooper()).postDelayed({
             hideSignupLoadingIcon()
             Toast.makeText(this, "Registration Done", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this,LoginActivity::class.java))
             finish()
-        },3000)
+        },2000)
     }
 }
