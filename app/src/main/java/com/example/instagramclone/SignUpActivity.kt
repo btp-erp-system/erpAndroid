@@ -3,8 +3,12 @@ package com.example.instagramclone
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.instagramclone.Models.User
 import com.google.firebase.Firebase
@@ -17,6 +21,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var etUserName: EditText
+    private lateinit var signupProgressBarIcon: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +30,7 @@ class SignUpActivity : AppCompatActivity() {
         etEmail = findViewById(R.id.emailText)
         etPassword = findViewById(R.id.passText)
         etUserName = findViewById(R.id.usernameText)
-
+        signupProgressBarIcon = findViewById(R.id.signupLoadingIcon)
         val auth = FirebaseAuth.getInstance()
         val database = Firebase.database
 
@@ -48,15 +53,32 @@ class SignUpActivity : AppCompatActivity() {
                 etPassword.error = "Password is to short"
             }
             else {
-                Toast.makeText(this, "Registration Done", Toast.LENGTH_SHORT).show()
                 auth.createUserWithEmailAndPassword(etEmail.text.toString().trim(),etPassword.text.toString().trim()).
                 addOnCompleteListener {task ->
                     if(task.isComplete){
                         val newUser = User(etUserName.text.toString().trim(),etEmail.text.toString().trim(),etPassword.text.toString().trim())
                     }
                 }
-                startActivity(Intent(this,LoginActivity::class.java))
+                showSignupLoadingIcon()
+                simulateSIgnup()
             }
         }
+    }
+
+    private fun showSignupLoadingIcon(){
+        signupProgressBarIcon.visibility = View.VISIBLE
+    }
+
+    private fun hideSignupLoadingIcon(){
+        signupProgressBarIcon.visibility = View.GONE
+    }
+
+    private fun simulateSIgnup(){
+        Handler(Looper.getMainLooper()).postDelayed({
+            hideSignupLoadingIcon()
+            Toast.makeText(this, "Registration Done", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
+        },3000)
     }
 }
